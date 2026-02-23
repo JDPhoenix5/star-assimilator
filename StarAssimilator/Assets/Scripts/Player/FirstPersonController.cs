@@ -16,8 +16,16 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
+    [Header("Camera Thingies")]
+    private float camTilt;
+    public float camTiltAmount = 10f;
+
+    private float toggleSpeed = 3.0f;
+    private Vector3 startPos;
+
     private Vector3 currentMovement;
     private float verticalRotation;
+
     private float CurrentSpeed => walkSpeed * (playerInputHandler.IsSprinting ? sprintMultiplier : 1f);
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,6 +66,11 @@ public class FirstPersonController : MonoBehaviour
         verticalRotation = Mathf.Clamp(verticalRotation - rotationAmount, -upDownLookRange, upDownLookRange);
         mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
     }
+    private void ApplySwayRotation()
+    {
+        camTilt = Mathf.Lerp(camTilt, playerInputHandler.MovementInput.x * camTiltAmount, Time.deltaTime * 5f);
+        mainCamera.transform.localRotation = Quaternion.Euler(mainCamera.transform.localRotation.eulerAngles.x, mainCamera.transform.localRotation.eulerAngles.y, -camTilt);
+    }
 
     private void HandleRotation()
     {
@@ -66,5 +79,6 @@ public class FirstPersonController : MonoBehaviour
 
         ApplyHorizontalRotation(mouseXRotation);
         ApplyVerticalRotation(mouseYRotation);
+        ApplySwayRotation();
     }
 }
