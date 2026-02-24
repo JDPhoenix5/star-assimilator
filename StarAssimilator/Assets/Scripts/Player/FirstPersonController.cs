@@ -16,9 +16,11 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
-    [Header("Camera Thingies")]
+    [Header("Camera Bob and Sway")]
     private float camTilt;
     public float camTiltAmount = 10f;
+    [SerializeField, Range(0, 0.1f)] private float amplitude = 0.015f;
+    [SerializeField, Range(0, 30f)] private float frequency = 10.0f;
 
     private float toggleSpeed = 3.0f;
     private Vector3 startPos;
@@ -71,6 +73,23 @@ public class FirstPersonController : MonoBehaviour
         camTilt = Mathf.Lerp(camTilt, playerInputHandler.MovementInput.x * camTiltAmount, Time.deltaTime * 5f);
         mainCamera.transform.localRotation = Quaternion.Euler(mainCamera.transform.localRotation.eulerAngles.x, mainCamera.transform.localRotation.eulerAngles.y, -camTilt);
     }
+    private void ApplyCameraBob()
+    {
+        if (playerInputHandler.IsWalking && playerInputHandler.IsSprinting)
+        {
+            float bobbingAmount = Mathf.Sin(Time.time * (frequency * 1.5f)) * amplitude;
+            mainCamera.transform.localPosition = new Vector3(mainCamera.transform.localPosition.x, startPos.y + bobbingAmount, mainCamera.transform.localPosition.z);
+        }
+        else if (playerInputHandler.IsWalking)
+        {
+            float bobbingAmount = Mathf.Sin(Time.time * frequency) * (amplitude * 2);
+            mainCamera.transform.localPosition = new Vector3(mainCamera.transform.localPosition.x, startPos.y + bobbingAmount, mainCamera.transform.localPosition.z);
+        }
+        else
+        {
+            mainCamera.transform.localPosition = Vector3.Lerp(mainCamera.transform.localPosition, startPos, Time.deltaTime * 5f);
+        }
+    }
 
     private void HandleRotation()
     {
@@ -80,5 +99,6 @@ public class FirstPersonController : MonoBehaviour
         ApplyHorizontalRotation(mouseXRotation);
         ApplyVerticalRotation(mouseYRotation);
         ApplySwayRotation();
+        ApplyCameraBob();
     }
 }

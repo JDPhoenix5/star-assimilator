@@ -8,7 +8,7 @@ public class DialogueSystem : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public TextMeshProUGUI textComponent;
-    public string[] lines;
+    public string[] lines, currentEmotion;
     public float textSpeed;
     private int index;
     public Animator animator;

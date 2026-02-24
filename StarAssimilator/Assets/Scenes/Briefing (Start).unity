@@ -343,7 +343,7 @@ MonoBehaviour:
   - Here's a chip. It does something I guess.
   - The last guy? What last guy? I'm new here.
   - Ok bye have fun!
-  textSpeed: 0.01
+  textSpeed: 0.05
   animator: {fileID: 2145716112}
 --- !u!114 &921603742
 MonoBehaviour:
