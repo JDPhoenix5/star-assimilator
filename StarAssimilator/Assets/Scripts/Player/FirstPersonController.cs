@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
+    [Header("Interaction")]
+    private bool pressing;
+
     [Header("Camera Bob and Sway")]
     private float camTilt;
     public float camTiltAmount = 10f;
@@ -29,20 +33,20 @@ public class FirstPersonController : MonoBehaviour
     private float verticalRotation;
 
     private float CurrentSpeed => walkSpeed * (playerInputHandler.IsSprinting ? sprintMultiplier : 1f);
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         HandleMovement();
         HandleRotation();
+        CheckClick();
     }
-
+    #region cam & player Movement
     private Vector3 CalculateWorldDirection()
     {
         Vector3 inputDirection = new Vector3(playerInputHandler.MovementInput.x, 0f, playerInputHandler.MovementInput.y);
@@ -90,6 +94,7 @@ public class FirstPersonController : MonoBehaviour
             mainCamera.transform.localPosition = Vector3.Lerp(mainCamera.transform.localPosition, startPos, Time.deltaTime * 5f);
         }
     }
+    
 
     private void HandleRotation()
     {
@@ -100,5 +105,15 @@ public class FirstPersonController : MonoBehaviour
         ApplyVerticalRotation(mouseYRotation);
         ApplySwayRotation();
         ApplyCameraBob();
+    }
+    #endregion
+
+    private void CheckClick()
+    {
+        if (playerInputHandler.Interact)
+        {
+            
+        }
+
     }
 }

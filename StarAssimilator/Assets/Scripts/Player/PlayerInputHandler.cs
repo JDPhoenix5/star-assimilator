@@ -1,4 +1,3 @@
-using UnityEditor.Sprites;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +25,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     public bool IsSprinting { get; private set; }
     public bool IsWalking { get; private set; }
+    public bool Interact {  get; private set; }
 
     private void Awake()
     {
@@ -59,9 +59,8 @@ public class PlayerInputHandler : MonoBehaviour
         sprintAction.performed += inputInfo => IsSprinting = true;
         sprintAction.canceled += inputInfo => IsSprinting = false;
 
-        
-
-
+        interactAction.performed += inputInfo => Interact = true;
+        interactAction.canceled += inputInfo => Interact = false; 
 
     }
     private void OnEnable()
