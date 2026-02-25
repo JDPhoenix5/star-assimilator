@@ -1,6 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -18,6 +18,9 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private PlayerInputHandler playerInputHandler;
 
     [Header("Interaction")]
+    public SpriteRenderer hand;
+    [SerializeField] private float interactRange = 5f;
+    [SerializeField] private Equippable heldItem;
     private bool pressing;
 
     [Header("Camera Bob and Sway")]
@@ -45,6 +48,7 @@ public class FirstPersonController : MonoBehaviour
         HandleMovement();
         HandleRotation();
         CheckClick();
+        TryDrop();
     }
     #region cam & player Movement
     private Vector3 CalculateWorldDirection()
@@ -110,10 +114,84 @@ public class FirstPersonController : MonoBehaviour
 
     private void CheckClick()
     {
-        if (playerInputHandler.Interact)
+        Ray r = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+        Debug.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * interactRange, UnityEngine.Color.white, 2f);
+        
+        if (Physics.Raycast(r, out RaycastHit hit, interactRange))
         {
-            
+            if (hit.collider.GetComponent<Interaction>())
+            {
+                //display the hand object to signify that you can pick it up
+                Debug.Log(hit.collider.name);
+                if (playerInputHandler.Interact)
+                {
+                    Interact(hit.collider.gameObject);
+                }
+            }
         }
+        //this is so you can use items outside of interactable objects
+        Interact();
+    }
+    public void Interact()
+    {
+        if (playerInputHandler.Interact && heldItem != null)
+        {
+            heldItem.Use();
+        }
+        if (!playerInputHandler.Interact && heldItem != null)
+        {
+            heldItem.Unuse();
+            hand.sprite = heldItem.GetComponent<Equippable>().equipSprite;
+        }
+    }
+    public void Interact(GameObject obj)
+    {
+        if (!obj.GetComponent<Equippable>())
+        {
+            if (heldItem == null)
+            {
+                heldItem = obj.GetComponent<Interaction>().Interact().GetComponent<Equippable>();
+            }
+            else
+            {
+                obj.GetComponent<Interaction>().Interact(heldItem);
+                heldItem.Use();
+            }
+        }
+        else if ((heldItem == null) && obj.GetComponent<Equippable>())
+        {
+            hand.sprite = obj.GetComponent<Equippable>().equipSprite;
+            //pickup code
+            heldItem = obj.GetComponent<Equippable>();
+            heldItem.GetComponent<Equippable>().Interact();
 
+            //replace hand sprite with held object sprite
+            
+            heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>(), hand);
+        }
+        else if(obj.GetComponent<Equippable>())
+        {
+            hand.sprite = obj.GetComponent<Equippable>().equipSprite;
+            heldItem = obj.GetComponent<Equippable>().Interact(heldItem).GetComponent<Equippable>();
+
+            
+            heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>(), hand);
+
+        }
+        else
+        {
+            Debug.LogError("How");
+        }
+    }
+    private void TryDrop()
+    {
+        if (playerInputHandler.Drop && heldItem != null)
+        {
+            //Debug.Log("drop");
+            Transform dropOff = hand.transform;
+            //dropOff.position =  
+            heldItem.Drop(hand.transform);
+            heldItem = null;
+        }
     }
 }
