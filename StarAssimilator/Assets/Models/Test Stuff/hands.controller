@@ -206,9 +206,6 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: use
-    m_EventTreshold: 0
-  - m_ConditionMode: 1
     m_ConditionEvent: use continuous
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -235,9 +232,6 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: use once
-    m_EventTreshold: 0
-  - m_ConditionMode: 1
-    m_ConditionEvent: use
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3196445582782586973}
