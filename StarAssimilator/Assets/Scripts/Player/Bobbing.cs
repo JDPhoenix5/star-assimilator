@@ -45,14 +45,14 @@ public class Bobbing : MonoBehaviour
     {
         Vector3 pos = Vector3.zero;
         pos.y += Mathf.Sin(Time.time * frequency) * amplitude;
-        pos.x += Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
+        pos.x += Mathf.Cos(Time.time * frequency / 2.0f) * amplitude * 2.0f;
         return pos;
     }
 
     private void ResetPosition()
     {
         if (camera.localPosition == startPos) return;
-        camera.localPosition = Vector3.Lerp(camera.localPosition, startPos, 1 * Time.deltaTime);
+        camera.localPosition = Vector3.Lerp(camera.localPosition, startPos, 3.0f * Time.deltaTime);
     }
 
     private Vector3 FocusTarget()
