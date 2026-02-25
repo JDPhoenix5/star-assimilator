@@ -19,6 +19,7 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Interaction")]
     public SpriteRenderer hand;
+    public SpriteRenderer hover;
     [SerializeField] private float interactRange = 5f;
     [SerializeField] private Equippable heldItem;
     private bool pressing;
@@ -48,7 +49,8 @@ public class FirstPersonController : MonoBehaviour
         HandleMovement();
         HandleRotation();
         CheckClick();
-        TryDrop();
+        TryDrop(); 
+        characterController.SimpleMove(Vector3.down);
     }
     #region cam & player Movement
     private Vector3 CalculateWorldDirection()
@@ -116,12 +118,13 @@ public class FirstPersonController : MonoBehaviour
     {
         Ray r = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
         Debug.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * interactRange, UnityEngine.Color.white, 2f);
-        
+        hover.gameObject.SetActive(false);
         if (Physics.Raycast(r, out RaycastHit hit, interactRange))
         {
             if (hit.collider.GetComponent<Interaction>())
             {
-                //display the hand object to signify that you can pick it up
+                //display the hand object to signify that you can interact
+                hover.gameObject.SetActive(true);
                 Debug.Log(hit.collider.name);
                 if (playerInputHandler.Interact)
                 {
@@ -150,7 +153,7 @@ public class FirstPersonController : MonoBehaviour
         {
             if (heldItem == null)
             {
-                heldItem = obj.GetComponent<Interaction>().Interact().GetComponent<Equippable>();
+                obj.GetComponent<Interaction>().Interact();
             }
             else
             {
@@ -174,9 +177,7 @@ public class FirstPersonController : MonoBehaviour
             hand.sprite = obj.GetComponent<Equippable>().equipSprite;
             heldItem = obj.GetComponent<Equippable>().Interact(heldItem).GetComponent<Equippable>();
 
-            
             heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>(), hand);
-
         }
         else
         {

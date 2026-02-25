@@ -16,13 +16,11 @@ public abstract class Equippable : Interaction
     }
     public void Use()
     {
-        AnimateHold();
-        Debug.Log("Used");
+        AnimateOnce();
     }
     public void Unuse()
     {
         UnAnimate();
-        Debug.Log("Unused");
     }
 
     public override GameObject Interact()
