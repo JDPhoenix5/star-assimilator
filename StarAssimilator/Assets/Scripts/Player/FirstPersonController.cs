@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -19,7 +20,9 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Interaction")]
     public SpriteRenderer hand;
+    public Sprite defaultHandSprite;
     public SpriteRenderer hover;
+    public ParticleSystem extinguisher;
     [SerializeField] private float interactRange = 5f;
     [SerializeField] private Equippable heldItem;
     private bool pressing;
@@ -161,38 +164,41 @@ public class FirstPersonController : MonoBehaviour
                 heldItem.Use();
             }
         }
-        else if ((heldItem == null) && obj.GetComponent<Equippable>())
+        else 
         {
-            hand.sprite = obj.GetComponent<Equippable>().equipSprite;
-            //pickup code
-            heldItem = obj.GetComponent<Equippable>();
-            heldItem.GetComponent<Equippable>().Interact();
-
-            //replace hand sprite with held object sprite
-            
-            heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>(), hand);
-        }
-        else if(obj.GetComponent<Equippable>())
-        {
-            hand.sprite = obj.GetComponent<Equippable>().equipSprite;
-            heldItem = obj.GetComponent<Equippable>().Interact(heldItem).GetComponent<Equippable>();
-
-            heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>(), hand);
-        }
-        else
-        {
-            Debug.LogError("How");
+            if (heldItem == null)
+            {   
+                
+                //pickup code
+                heldItem = obj.GetComponent<Equippable>();
+                heldItem.GetComponent<Equippable>().Interact();
+                //replace hand sprite with held object sprite
+                switch (heldItem.GetComponent<Equippable>())
+                {
+                    case FireExtinguisher:
+                        Debug.Log("fire!!");
+                        hand.sprite = obj.GetComponent<FireExtinguisher>().equipSprite;
+                        obj.GetComponent<FireExtinguisher>().extinguishSystem = extinguisher;
+                        break;
+                    case ScrewDriver:
+                        Debug.Log("drive!!");
+                        hand.sprite = obj.GetComponent<ScrewDriver>().equipSprite;
+                        break;
+                    default:
+                        hand.sprite = defaultHandSprite;
+                        break;
+                }
+                heldItem.GetComponent<Equippable>().SetAnimator(hand.GetComponent<Animator>());
+            }
         }
     }
     private void TryDrop()
     {
         if (playerInputHandler.Drop && heldItem != null)
         {
-            //Debug.Log("drop");
-            Transform dropOff = hand.transform;
-            //dropOff.position =  
             heldItem.Drop(hand.transform);
             heldItem = null;
+            hand.sprite = defaultHandSprite;
         }
     }
 }

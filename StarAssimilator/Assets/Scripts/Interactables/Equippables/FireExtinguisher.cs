@@ -1,16 +1,18 @@
 using UnityEngine;
 
-public class FireExtinguisher : MonoBehaviour
+public class FireExtinguisher : Equippable
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public ParticleSystem extinguishSystem;
+    public new void Use()
     {
-        
+        animator.enabled = true;
+        AnimateHold();
+        extinguishSystem.gameObject.SetActive(true);
     }
-
-    // Update is called once per frame
-    void Update()
+    public new void Unuse()
     {
-        
+        UnAnimate();
+        animator.enabled = false;
+        extinguishSystem.gameObject.SetActive(false);
     }
 }

@@ -5,22 +5,21 @@ public abstract class Equippable : Interaction
 {
     public Sprite equipSprite;
     public bool inUse;
-    [SerializeField] private Animator animator;
-    [SerializeField] private SpriteRenderer renderer;
+    [SerializeField] protected Animator animator;
 
-    public void SetAnimator(Animator thingy, SpriteRenderer render)
+    public void SetAnimator(Animator thingy)
     {
         animator = thingy;
-        renderer = render;
-        renderer.sprite = equipSprite;
     }
     public void Use()
     {
+        animator.enabled = true;
         AnimateOnce();
     }
     public void Unuse()
     {
         UnAnimate();
+        animator.enabled = false;
     }
 
     public override GameObject Interact()

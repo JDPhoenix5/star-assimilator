@@ -8,5 +8,6 @@ public class WorkingWires : WirePanel
     }
     public override void OnClosed()
     {
+
     }
 }

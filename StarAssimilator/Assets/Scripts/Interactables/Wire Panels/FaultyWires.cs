@@ -4,7 +4,7 @@ using UnityEngine;
 public class FaultyWires : WirePanel
 {
     private bool onFire, extinguished;
-    private ParticleSystem smoke;
+    public ParticleSystem smoke;
     private void Start()
     {
         cooldownLength = 30;
@@ -42,11 +42,12 @@ public class FaultyWires : WirePanel
         {
             if (equipped.GetComponent<FireExtinguisher>())
             {
-
+                extinguished = true;
+                onFire = false;
+                smoke.gameObject.SetActive(false);
             }
         }
-
-            return Interact();
+        return Interact();
     }
     
     public override void OnOpened()
